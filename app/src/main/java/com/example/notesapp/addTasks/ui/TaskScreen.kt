@@ -50,16 +50,49 @@ fun TaskScreen(taskViewModel: TaskViewModel) {
         is TaskUiState.Success -> {
 
             Box(Modifier.fillMaxSize()) {
+
                 AddTaskDialog(
                     showDialog,
                     onDismiss = { taskViewModel.onDialogClose() },
                     onTaskAdded = { taskViewModel.onTaskCreated(it) })
-                FabDialog(
+
+
+
+
+                Column(
                     Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(16.dp), taskViewModel
-                )
-                TasksList( (uiState as TaskUiState.Success).tasks ,taskViewModel)
+                        .padding(16.dp)
+                ) {
+
+
+                    Text(
+                        text = "Notas Random ",
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(8.dp),
+                        color = Color.Magenta,
+                    )
+
+
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    TasksList(
+                        (uiState as TaskUiState.Success).tasks,
+                        taskViewModel,
+                        Modifier.weight(1f)
+                    )
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    FabDialog(
+                        modifier = Modifier, taskViewModel
+                    )
+
+                }
+
+
             }
 
         }
@@ -69,10 +102,9 @@ fun TaskScreen(taskViewModel: TaskViewModel) {
 }
 
 @Composable
-fun TasksList(tasks: List<TaskModel>,taskViewModel: TaskViewModel) {
+fun TasksList(tasks: List<TaskModel>, taskViewModel: TaskViewModel, modifier: Modifier) {
 
-
-    LazyColumn {
+    LazyColumn(modifier = modifier) {
         items(tasks, key = { it.id }) {
             ItemTask(it, taskViewModel)
         }
@@ -120,12 +152,26 @@ fun ItemTask(taskModel: TaskModel, taskViewModel: TaskViewModel) {
 
 @Composable
 fun FabDialog(modifier: Modifier, taskViewModel: TaskViewModel) {
-    FloatingActionButton(
-        onClick = { taskViewModel.onShowDialogClick() },
-        modifier = modifier
-    ) {
-        Icon(Icons.Filled.Add, contentDescription = "")
+
+    Row() {
+
+        Text(
+            text = "para borrar mantener presionado ",
+            modifier = Modifier.weight(2f),
+            color = Color.LightGray
+        )
+
+        FloatingActionButton(
+            onClick = { taskViewModel.onShowDialogClick() },
+            modifier = modifier.weight(1f)
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "")
+        }
+
+
     }
+
+
 }
 
 @Composable
