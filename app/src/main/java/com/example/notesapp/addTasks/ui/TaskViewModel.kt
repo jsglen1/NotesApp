@@ -1,28 +1,47 @@
 package com.example.notesapp.addTasks.ui
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.notesapp.addTasks.domain.AddTaskUseCase
+import com.example.notesapp.addTasks.domain.DeleteTaskUseCase
+import com.example.notesapp.addTasks.domain.GetTasksUseCase
+import com.example.notesapp.addTasks.domain.UpdateTaskUseCase
+import com.example.notesapp.addTasks.ui.TaskUiState.*
 import com.example.notesapp.addTasks.ui.model.TaskModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TaskViewModel @Inject constructor() : ViewModel() {
+@HiltViewModel
+class TaskViewModel @Inject constructor(
+    private val addTaskUseCase: AddTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    getTasksUseCase: GetTasksUseCase
+) : ViewModel() {
+
+    val uiState: StateFlow<TaskUiState> = getTasksUseCase().map(::Success)
+        .catch { Error(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
+
 
     private val _showDialog = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _showDialog
 
-    private val _tasks = mutableStateListOf<TaskModel>()
-    val tasks: List<TaskModel> = _tasks
 
     fun onDialogClose() {
         _showDialog.value = false
     }
 
     fun onTaskCreated(text: String) {
-        _tasks.add(TaskModel(task = text))
         Log.i("glen", text)
+        viewModelScope.launch {
+            addTaskUseCase(TaskModel(task = text))
+        }
         onDialogClose()
     }
 
@@ -30,13 +49,16 @@ class TaskViewModel @Inject constructor() : ViewModel() {
         _showDialog.value = true
     }
 
-    fun onCheckBox(taskModel: TaskModel) {
-        val index = _tasks.indexOf(taskModel)
-        _tasks[index] = _tasks[index].let { it.copy(selected = !it.selected) }
+    fun onCheckBoxSelected(taskModel: TaskModel) {
+        viewModelScope.launch {
+            updateTaskUseCase(taskModel.copy(selected = !taskModel.selected))
+        }
     }
 
     fun onItemRemove(taskModel: TaskModel) {
-        val task = _tasks.find { it.id == taskModel.id }
-        _tasks.remove(task)
+        viewModelScope.launch {
+            deleteTaskUseCase(taskModel)
+        }
+
     }
 }
