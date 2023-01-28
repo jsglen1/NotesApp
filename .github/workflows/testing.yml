@@ -1,14 +1,9 @@
-name: Android CI
-on:
-  push:
-    branches: [ "CI", "master" ]
-  pull_request:
-    branches: [ "CI", "master" ]
+name: Android Testing CI
+on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: set up JDK 11
@@ -17,11 +12,13 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
-      - name: Build app
-        run: ./gradlew assemble
 
+      - name: Unit Test
+        run: ./gradlew testDebugUnitTest
 
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }}
