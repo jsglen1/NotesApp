@@ -1,5 +1,6 @@
 package com.example.notesapp.addTasks.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -67,11 +68,10 @@ fun TaskScreen(taskViewModel: TaskViewModel) {
 
 
                     Text(
-                        text = "Notas Random ",
+                        text = "Notas Aleatorias",
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(8.dp),
-                        color = Color.Magenta,
+                        modifier = Modifier.padding(8.dp)
                     )
 
 
@@ -157,16 +157,17 @@ fun FabDialog(modifier: Modifier, taskViewModel: TaskViewModel) {
 
         Text(
             text = "para borrar mantener presionado ",
-            modifier = Modifier.weight(2f),
+            modifier = Modifier.weight(1f),
             color = Color.LightGray
         )
 
         FloatingActionButton(
             onClick = { taskViewModel.onShowDialogClick() },
-            modifier = modifier.weight(1f)
+            //modifier = Modifier.weight(1f)
         ) {
             Icon(Icons.Filled.Add, contentDescription = "")
         }
+
 
 
     }
@@ -180,34 +181,56 @@ fun AddTaskDialog(show: Boolean, onDismiss: () -> Unit, onTaskAdded: (String) ->
 
     if (show) {
         Dialog(onDismissRequest = { onDismiss() }) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(16.dp)
+
+            Surface(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                shape = MaterialTheme.shapes.small,
+                border = BorderStroke(2.dp, Color.Black),
+                elevation = 6.dp
             ) {
-                Text(
-                    text = "Añade tu tarea",
-                    fontSize = 18.sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    singleLine = true,
-                    maxLines = 1
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                Button(onClick = {
-                    onTaskAdded(text)
-                    text = ""
-                }, Modifier.fillMaxWidth()) {
-                    Text(text = "Añadir Tarea")
+
+
+                Column(
+                    Modifier
+                        .background(Color.White)
+                        .padding(16.dp)
+                ) {
+
+                    Text(
+                        text = "Añade tu tarea",
+                        fontSize = 18.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        singleLine = true,
+                        maxLines = 1,
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.LightGray
+                        )
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Button(onClick = {
+                        onTaskAdded(text)
+                        text = ""
+                    }, Modifier.fillMaxWidth()) {
+                        Text(text = "Añadir Tarea")
+                    }
+
+
                 }
+
+
             }
+
+
         }
     }
 }
