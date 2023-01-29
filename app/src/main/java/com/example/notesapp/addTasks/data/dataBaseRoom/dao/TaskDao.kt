@@ -1,6 +1,7 @@
-package com.example.notesapp.addTasks.data
+package com.example.notesapp.addTasks.data.dataBaseRoom.dao
 
 import androidx.room.*
+import com.example.notesapp.addTasks.data.dataBaseRoom.entitys.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
