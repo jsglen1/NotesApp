@@ -8,6 +8,6 @@ class AddTaskUseCase @Inject constructor(private val taskRepository: TaskReposit
 
     suspend operator fun invoke(taskModel: TaskModel) {
         taskRepository.addTask(taskModel)
-        //taskRepository.addTaskFirebase(taskModel)
+        taskRepository.addTaskFirebase(taskModel)
     }
 }
