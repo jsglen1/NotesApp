@@ -5,10 +5,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.notesapp.addTasks.domain.AddTaskToFireBaseUseCase
 import com.example.notesapp.addTasks.ui.model.TaskModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TaskViewModel @Inject constructor() : ViewModel() {
+@HiltViewModel
+class TaskViewModel @Inject constructor(private val addTaskToFireBaseUseCase: AddTaskToFireBaseUseCase) : ViewModel() {
 
     private val _showDialog = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _showDialog
@@ -21,6 +26,9 @@ class TaskViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onTaskCreated(text: String) {
+
+        viewModelScope.launch { addTaskToFireBaseUseCase(TaskModel(task = text)) }
+
         _tasks.add(TaskModel(task = text))
         Log.i("glen", text)
         onDialogClose()
