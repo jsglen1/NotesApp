@@ -1,7 +1,9 @@
 package com.example.notesapp.addTasks.ui.model
 
 data class TaskModel(
-    val id: Int = System.currentTimeMillis().hashCode(),
+    val id: Int,
     val task: String,
-    var selected: Boolean = false
-)
+    var selected: Boolean
+) {
+    constructor(task: String) : this(id = System.currentTimeMillis().hashCode(), task = "", selected = false)
+}

@@ -1,5 +1,6 @@
 package com.example.notesapp.addTasks.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -31,29 +32,57 @@ fun TaskScreen(taskViewModel: TaskViewModel) {
     val showDialog: Boolean by taskViewModel.showDialog.observeAsState(initial = false)
 
     Box(Modifier.fillMaxSize()) {
+
+        //taskViewModel.getTaskFromFireBase()
+
         AddTaskDialog(
             showDialog,
             onDismiss = { taskViewModel.onDialogClose() },
             onTaskAdded = { taskViewModel.onTaskCreated(it) })
-        FabDialog(
-            Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp), taskViewModel
-        )
-        TasksList(taskViewModel)
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(16.dp)
+        ) {
+
+            Text(
+                text = "Notas Aleatorias",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Spacer(modifier = Modifier.size(8.dp))
+
+            TasksList(taskViewModel,Modifier.weight(1f))
+
+            Spacer(modifier = Modifier.size(8.dp))
+
+            FabDialog(taskViewModel)
+
+        }
+
+
     }
 }
 
 @Composable
-fun TasksList(taskViewModel: TaskViewModel) {
-
+fun TasksList(taskViewModel: TaskViewModel, weight: Modifier) {
+    //pinta vista todas las tasks
     val myTask: List<TaskModel> = taskViewModel.tasks
 
-    LazyColumn {
-        items(myTask, key = { it.id }) {
-            ItemTask(it, taskViewModel)
+    Column(modifier = weight) {
+        LazyColumn {
+            items(myTask, key = { it.id }) {
+                ItemTask(it, taskViewModel)
+            }
         }
     }
+
+
 }
 
 //@Preview(showBackground = true, showSystemUi = true)
@@ -62,8 +91,9 @@ fun ItemTask(taskModel: TaskModel, taskViewModel: TaskViewModel) {
     Card(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp).pointerInput(Unit){
-                detectTapGestures (onLongPress = {
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onLongPress = {
                     taskViewModel.onItemRemove(taskModel)
                 })
             },
@@ -95,13 +125,26 @@ fun ItemTask(taskModel: TaskModel, taskViewModel: TaskViewModel) {
 }
 
 @Composable
-fun FabDialog(modifier: Modifier, taskViewModel: TaskViewModel) {
-    FloatingActionButton(
-        onClick = { taskViewModel.onShowDialogClick() },
-        modifier = modifier
-    ) {
-        Icon(Icons.Filled.Add, contentDescription = "")
+fun FabDialog(taskViewModel: TaskViewModel) {
+
+    Row(verticalAlignment = Alignment.Bottom) {
+
+        Text(
+            text = "para borrar mantener presionado ",
+            modifier = Modifier.weight(1f).align(Alignment.CenterVertically),
+            color = Color.LightGray
+        )
+
+        FloatingActionButton(
+            onClick = { taskViewModel.onShowDialogClick() },
+            //modifier = modifier
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "")
+        }
+
     }
+
+
 }
 
 @Composable
@@ -110,34 +153,53 @@ fun AddTaskDialog(show: Boolean, onDismiss: () -> Unit, onTaskAdded: (String) ->
 
     if (show) {
         Dialog(onDismissRequest = { onDismiss() }) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(16.dp)
+
+
+            Surface(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                shape = MaterialTheme.shapes.small,
+                border = BorderStroke(2.dp, Color.Black),
+                elevation = 6.dp
             ) {
-                Text(
-                    text = "Añade tu tarea",
-                    fontSize = 18.sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    singleLine = true,
-                    maxLines = 1
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                Button(onClick = {
-                    onTaskAdded(text)
-                    text = ""
-                }, Modifier.fillMaxWidth()) {
-                    Text(text = "Añadir Tarea")
+
+
+                Column(
+                    Modifier
+                        .background(Color.White)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Añade tu tarea",
+                        fontSize = 18.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        singleLine = true,
+                        maxLines = 1,
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.LightGray
+                        )
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Button(onClick = {
+                        onTaskAdded(text)
+                        text = ""
+                    }, Modifier.fillMaxWidth()) {
+                        Text(text = "Añadir Tarea")
+                    }
                 }
+
+
             }
+
         }
     }
 }
