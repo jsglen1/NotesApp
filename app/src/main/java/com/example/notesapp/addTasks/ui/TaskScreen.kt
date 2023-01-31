@@ -33,7 +33,7 @@ fun TaskScreen(taskViewModel: TaskViewModel) {
 
     Box(Modifier.fillMaxSize()) {
 
-        //taskViewModel.getTaskFromFireBase()
+        taskViewModel.getTaskFromFireBase()
 
         AddTaskDialog(
             showDialog,

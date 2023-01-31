@@ -5,5 +5,5 @@ data class TaskModel(
     val task: String,
     var selected: Boolean
 ) {
-    constructor(task: String) : this(id = System.currentTimeMillis().hashCode(), task = "", selected = false)
+    constructor(task: String) : this(id = System.currentTimeMillis().hashCode(), task = task, selected = false)
 }

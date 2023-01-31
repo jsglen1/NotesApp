@@ -25,15 +25,15 @@ class TaskViewModel @Inject constructor(
     private val _tasks = mutableStateListOf<TaskModel>()
     val tasks: List<TaskModel> = _tasks
 
-    /*
+
     fun getTaskFromFireBase() {
         viewModelScope.launch {
-            //_tasks.removeAll(_tasks) // libera el buffer view tareas
-            //_tasks.addAll(getTasksToFireBaseUseCase())
+            _tasks.removeAll(_tasks) // libera el buffer view tareas
+            _tasks.addAll(getTasksToFireBaseUseCase())
         }
     }
 
-     */
+
 
 
     fun onDialogClose() {
@@ -45,6 +45,10 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch { addTaskToFireBaseUseCase(TaskModel(task = text)) }
 
         _tasks.add(TaskModel(task = text))
+
+        //_tasks[_tasks.size].let { it.copy(task = it.task) }
+
+
         Log.i("glen", text)
         onDialogClose()
     }
