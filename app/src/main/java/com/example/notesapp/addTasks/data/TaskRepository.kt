@@ -6,7 +6,10 @@ import com.example.notesapp.addTasks.data.fireBase.taskModel.taskModelFireBase
 import com.example.notesapp.addTasks.ui.model.TaskModel
 import com.google.firebase.firestore.CollectionReference
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,6 +21,14 @@ class TaskRepository @Inject constructor(
 
     val tasks: Flow<List<TaskModel>> =
         taskDao.getTasks().map { items -> items.map { TaskModel(it.id, it.task, it.selected) } }
+
+    /*
+    suspend fun getTasksFireBase(): List<TaskModel> =
+        taskList.get().await().map{  document -> document.toObject(TaskModel::class.java) } //{  document -> document.toObject(TaskModel::class.java)  }
+
+
+     */
+
 
     suspend fun addTask(taskModel: TaskModel) {
         taskDao.addTask(taskModel.toTaskEntity())
@@ -31,10 +42,12 @@ class TaskRepository @Inject constructor(
         taskDao.deleteTask(taskModel.toTaskEntity())
     }
 
+
     suspend fun addTaskFirebase(taskModel: TaskModel) {
         try {
-            taskList.document(taskModel.toTaskFireBase().id.toString()).set(taskModel.toTaskFireBase())
-        } catch (e: Exception){
+            taskList.document(taskModel.toTaskFireBase().id.toString())
+                .set(taskModel.toTaskFireBase())
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         //taskDao.addTask(taskModel.toTaskFireBase())

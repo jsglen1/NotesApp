@@ -5,15 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.notesapp.addTasks.domain.AddTaskUseCase
-import com.example.notesapp.addTasks.domain.DeleteTaskUseCase
-import com.example.notesapp.addTasks.domain.GetTasksUseCase
-import com.example.notesapp.addTasks.domain.UpdateTaskUseCase
+import com.example.notesapp.addTasks.domain.*
 import com.example.notesapp.addTasks.ui.TaskUiState.*
 import com.example.notesapp.addTasks.ui.model.TaskModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
