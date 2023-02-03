@@ -9,10 +9,7 @@ import com.example.notesapp.addTasks.ui.model.TaskModel
 import com.google.firebase.firestore.CollectionReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -54,10 +51,12 @@ class TaskRepository @Inject constructor(
         }
 
         val flowList: Flow<List<TaskModel>> = flow {
-            while (true) {
+
+                Log.i("Found?","datos[ok?]")
                 emit(response) // Emits the result of the request to the flow
-                delay(1000) // Suspends the coroutine for some time
-            }
+                Log.i("found2?",response.toString())
+                //delay(1000) // Suspends the coroutine for some time
+
         }
         Log.i("Lista", "son [${response.map { it.task }}]")
         //Log.i("Flow","son [${flowList.collect{its -> its.map { it.task }}}]")
@@ -66,8 +65,12 @@ class TaskRepository @Inject constructor(
 
     val tasksApi: Flow<List<TaskModel>> = flow {
         while (true) {
-            emit(getTaskFireBase()  ) // Emits the result of the request to the flow
-            delay(1000) // Suspends the coroutine for some time
+
+            getTaskFireBase().collect { emit(it) }
+            Log.i("Found?","datos[]")
+            emitAll(getTaskFireBase())
+            //emit(getTaskFireBase().collect{emit(it)}  ) // Emits the result of the request to the flow
+            //delay(1000) // Suspends the coroutine for some time
         }
     }
 
