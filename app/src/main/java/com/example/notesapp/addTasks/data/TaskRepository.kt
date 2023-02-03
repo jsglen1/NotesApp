@@ -1,5 +1,6 @@
 package com.example.notesapp.addTasks.data
 
+import android.util.Log
 import com.example.notesapp.addTasks.data.dataBaseRoom.dao.TaskDao
 import com.example.notesapp.addTasks.data.dataBaseRoom.entitys.TaskEntity
 import com.example.notesapp.addTasks.data.fireBase.taskModel.TaskModelFireBase
@@ -7,10 +8,12 @@ import com.example.notesapp.addTasks.data.fireBase.taskModel.toUiTaskModel
 import com.example.notesapp.addTasks.ui.model.TaskModel
 import com.google.firebase.firestore.CollectionReference
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,14 +28,22 @@ class TaskRepository @Inject constructor(
         taskDao.getTasks().map { items -> items.map { TaskModel(it.id, it.task, it.selected) } }
 
 
-    suspend fun getTaskApi():Flow<List<TaskModel>> = kotlinx.coroutines.withContext(Dispatchers.IO)
+
+    suspend fun getTaskApi():Flow<List<TaskModel>> = withContext(Dispatchers.IO)
     {
 
         val response: List<TaskModel> = taskList.get().await().map { document ->
             document.toObject(TaskModelFireBase::class.java).toUiTaskModel()
         }
 
-        val flowList: Flow<List<TaskModel>> = flow { response }
+        val flowList: Flow<List<TaskModel>> = flow {
+            while(true) {
+                emit(response) // Emits the result of the request to the flow
+                delay(5000) // Suspends the coroutine for some time
+            }
+        }
+        Log.i("Lista","son [${response.map { it.task }}]")
+        //Log.i("Flow","son [${flowList.collect{its -> its.map { it.task }}}]")
         flowList
 
     }

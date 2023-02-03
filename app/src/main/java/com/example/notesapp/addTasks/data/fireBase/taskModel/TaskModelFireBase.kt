@@ -5,8 +5,8 @@ import com.example.notesapp.addTasks.ui.model.TaskModel
 data class TaskModelFireBase(
     val id: Int,
     val task: String,
-    var selected: Boolean = false
-)
+    var selected: Boolean
+){ constructor() : this(id=0, task = "",selected = false) }
 
 
 //convierte de taskModelFireBase a modelo UiTaskModel
