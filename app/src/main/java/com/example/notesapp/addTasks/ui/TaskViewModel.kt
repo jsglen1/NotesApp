@@ -5,7 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.notesapp.addTasks.domain.*
+import com.example.notesapp.addTasks.domain.useCase.AddTaskUseCase
+import com.example.notesapp.addTasks.domain.useCase.DeleteTaskUseCase
+import com.example.notesapp.addTasks.domain.useCase.GetTasksUseCase
+import com.example.notesapp.addTasks.domain.useCase.UpdateTaskUseCase
+import com.example.notesapp.addTasks.domain.useCaseApi.AddTaskApiUseCase
+import com.example.notesapp.addTasks.domain.useCaseApi.GetTasksApiUseCase
 import com.example.notesapp.addTasks.ui.TaskUiState.*
 import com.example.notesapp.addTasks.ui.model.TaskModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,12 +24,14 @@ class TaskViewModel @Inject constructor(
     private val addTaskUseCase: AddTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
-    getTasksUseCase: GetTasksUseCase
+    private val addTaskApiUseCase: AddTaskApiUseCase,
+    getTasksUseCase: GetTasksUseCase,
+    getTasksApiUseCase: GetTasksApiUseCase
 ) : ViewModel() {
 
-    val uiState: StateFlow<TaskUiState> = getTasksUseCase().map(::Success)
+    val uiState: StateFlow<TaskUiState> = runBlocking { getTasksApiUseCase().map(::Success)
         .catch { Error(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading) }
 
 
     private val _showDialog = MutableLiveData<Boolean>()
@@ -39,6 +46,7 @@ class TaskViewModel @Inject constructor(
         Log.i("glen", text)
         viewModelScope.launch {
             addTaskUseCase(TaskModel(task = text))
+            addTaskApiUseCase(TaskModel(task = text)) // añade a firebase new line
         }
         onDialogClose()
     }

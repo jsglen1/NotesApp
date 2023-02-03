@@ -1,6 +1,7 @@
 package com.example.notesapp.addTasks.domain
 
 import com.example.notesapp.addTasks.data.TaskRepository
+import com.example.notesapp.addTasks.domain.useCase.GetTasksUseCase
 import com.example.notesapp.addTasks.ui.model.TaskModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

@@ -1,4 +1,4 @@
-package com.example.notesapp.addTasks.domain
+package com.example.notesapp.addTasks.domain.useCase
 
 import com.example.notesapp.addTasks.data.TaskRepository
 import com.example.notesapp.addTasks.ui.model.TaskModel
