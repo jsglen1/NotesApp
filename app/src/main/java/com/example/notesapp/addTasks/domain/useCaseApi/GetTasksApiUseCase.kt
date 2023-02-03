@@ -8,6 +8,6 @@ import javax.inject.Inject
 
 class GetTasksApiUseCase@Inject constructor(private val taskRepository: TaskRepository) {
      suspend operator fun invoke(): Flow<List<TaskModel>> {
-        return taskRepository.getTaskApi()
+        return taskRepository.getTaskFireBase()
     }
 }

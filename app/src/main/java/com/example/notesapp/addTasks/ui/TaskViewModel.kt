@@ -10,7 +10,9 @@ import com.example.notesapp.addTasks.domain.useCase.DeleteTaskUseCase
 import com.example.notesapp.addTasks.domain.useCase.GetTasksUseCase
 import com.example.notesapp.addTasks.domain.useCase.UpdateTaskUseCase
 import com.example.notesapp.addTasks.domain.useCaseApi.AddTaskApiUseCase
+import com.example.notesapp.addTasks.domain.useCaseApi.DeleteTaskApiUseCase
 import com.example.notesapp.addTasks.domain.useCaseApi.GetTasksApiUseCase
+import com.example.notesapp.addTasks.domain.useCaseApi.UpdateTaskApiUseCase
 import com.example.notesapp.addTasks.ui.TaskUiState.*
 import com.example.notesapp.addTasks.ui.model.TaskModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,16 +26,18 @@ class TaskViewModel @Inject constructor(
     private val addTaskUseCase: AddTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
-    private val addTaskApiUseCase: AddTaskApiUseCase,
     getTasksUseCase: GetTasksUseCase,
+    private val addTaskApiUseCase: AddTaskApiUseCase,
+    private val deleteTaskApiUseCase: DeleteTaskApiUseCase,
+    private val updateTaskApiUseCase: UpdateTaskApiUseCase,
     getTasksApiUseCase: GetTasksApiUseCase
 ) : ViewModel() {
 
     val uiState: StateFlow<TaskUiState> = runBlocking {
-        Log.i("entro","Entro!")
+        Log.i("entro", "Entro!")
         getTasksApiUseCase().map(::Success)
-        .catch { Error(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
+            .catch { Error(it) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Loading)
 
     }
 
@@ -49,7 +53,7 @@ class TaskViewModel @Inject constructor(
     fun onTaskCreated(text: String) {
         Log.i("glen", text)
         viewModelScope.launch {
-            addTaskUseCase(TaskModel(task = text))
+            //addTaskUseCase(TaskModel(task = text))
             addTaskApiUseCase(TaskModel(task = text)) // añade a firebase new line
         }
         onDialogClose()
@@ -61,13 +65,17 @@ class TaskViewModel @Inject constructor(
 
     fun onCheckBoxSelected(taskModel: TaskModel) {
         viewModelScope.launch {
-            updateTaskUseCase(taskModel.copy(selected = !taskModel.selected))
+            //updateTaskUseCase(taskModel.copy(selected = !taskModel.selected))
+            updateTaskApiUseCase(taskModel.copy(selected = !taskModel.selected))
+
         }
     }
 
     fun onItemRemove(taskModel: TaskModel) {
         viewModelScope.launch {
-            deleteTaskUseCase(taskModel)
+            //deleteTaskUseCase(taskModel)
+            deleteTaskApiUseCase(taskModel)
+
         }
 
     }

@@ -24,30 +24,11 @@ class TaskRepository @Inject constructor(
     //private val db: FirebaseFirestore
 ) {
 
+
+    //Room Crud
+
     val tasks: Flow<List<TaskModel>> =
         taskDao.getTasks().map { items -> items.map { TaskModel(it.id, it.task, it.selected) } }
-
-
-
-    suspend fun getTaskApi():Flow<List<TaskModel>> = withContext(Dispatchers.IO)
-    {
-
-        val response: List<TaskModel> = taskList.get().await().map { document ->
-            document.toObject(TaskModelFireBase::class.java).toUiTaskModel()
-        }
-
-        val flowList: Flow<List<TaskModel>> = flow {
-            while(true) {
-                emit(response) // Emits the result of the request to the flow
-                delay(5000) // Suspends the coroutine for some time
-            }
-        }
-        Log.i("Lista","son [${response.map { it.task }}]")
-        //Log.i("Flow","son [${flowList.collect{its -> its.map { it.task }}}]")
-        flowList
-
-    }
-
 
     suspend fun addTask(taskModel: TaskModel) {
         taskDao.addTask(taskModel.toTaskEntity())
@@ -62,6 +43,28 @@ class TaskRepository @Inject constructor(
     }
 
 
+    //FireBase Crud
+
+    suspend fun getTaskFireBase(): Flow<List<TaskModel>> = withContext(Dispatchers.IO)
+    {
+
+        val response: List<TaskModel> = taskList.get().await().map { document ->
+            document.toObject(TaskModelFireBase::class.java).toUiTaskModel()
+        }
+
+        val flowList: Flow<List<TaskModel>> = flow {
+            while (true) {
+                emit(response) // Emits the result of the request to the flow
+                delay(1000) // Suspends the coroutine for some time
+            }
+        }
+        Log.i("Lista", "son [${response.map { it.task }}]")
+        //Log.i("Flow","son [${flowList.collect{its -> its.map { it.task }}}]")
+        flowList
+
+    }
+
+
     fun addTaskFirebase(taskModel: TaskModel) {
         try {
             taskList.document(taskModel.toTaskFireBase().id.toString())
@@ -70,6 +73,27 @@ class TaskRepository @Inject constructor(
             e.printStackTrace()
         }
     }
+
+    fun deleteTaskFireBase(taskModel: TaskModel) {
+        try {
+            taskList.document(taskModel.toTaskFireBase().id.toString())
+                .delete()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun updateTaskFireBase(taskModel: TaskModel) {
+        try {
+            taskList.document(taskModel.toTaskFireBase().id.toString())
+                .set(taskModel.toTaskFireBase())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
 
 
 }
