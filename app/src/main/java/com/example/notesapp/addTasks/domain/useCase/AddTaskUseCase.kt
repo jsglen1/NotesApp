@@ -1,4 +1,4 @@
-package com.example.notesapp.addTasks.domain
+package com.example.notesapp.addTasks.domain.useCase
 
 import com.example.notesapp.addTasks.data.TaskRepository
 import com.example.notesapp.addTasks.ui.model.TaskModel
@@ -8,6 +8,5 @@ class AddTaskUseCase @Inject constructor(private val taskRepository: TaskReposit
 
     suspend operator fun invoke(taskModel: TaskModel) {
         taskRepository.addTask(taskModel)
-        taskRepository.addTaskFirebase(taskModel)
     }
 }

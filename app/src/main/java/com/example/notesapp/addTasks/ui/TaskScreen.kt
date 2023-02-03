@@ -87,7 +87,7 @@ fun TaskScreen(taskViewModel: TaskViewModel) {
                     Spacer(modifier = Modifier.size(8.dp))
 
                     FabDialog(
-                        modifier = Modifier, taskViewModel
+                         taskViewModel
                     )
 
                 }
@@ -151,9 +151,9 @@ fun ItemTask(taskModel: TaskModel, taskViewModel: TaskViewModel) {
 }
 
 @Composable
-fun FabDialog(modifier: Modifier, taskViewModel: TaskViewModel) {
+fun FabDialog(taskViewModel: TaskViewModel) {
 
-    Row() {
+    Row {
 
         Text(
             text = "para borrar mantener presionado ",
