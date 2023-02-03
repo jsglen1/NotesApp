@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -61,8 +62,15 @@ class TaskRepository @Inject constructor(
         Log.i("Lista", "son [${response.map { it.task }}]")
         //Log.i("Flow","son [${flowList.collect{its -> its.map { it.task }}}]")
         flowList
-
     }
+
+    val tasksApi: Flow<List<TaskModel>> = flow {
+        while (true) {
+            emit(getTaskFireBase()  ) // Emits the result of the request to the flow
+            delay(1000) // Suspends the coroutine for some time
+        }
+    }
+
 
 
     fun addTaskFirebase(taskModel: TaskModel) {

@@ -33,13 +33,12 @@ class TaskViewModel @Inject constructor(
     getTasksApiUseCase: GetTasksApiUseCase
 ) : ViewModel() {
 
-    val uiState: StateFlow<TaskUiState> = runBlocking {
-        Log.i("entro", "Entro!")
+    val uiState: StateFlow<TaskUiState> =
         getTasksApiUseCase().map(::Success)
             .catch { Error(it) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Loading)
 
-    }
+
 
 
     private val _showDialog = MutableLiveData<Boolean>()
